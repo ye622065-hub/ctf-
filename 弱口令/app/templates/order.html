@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ order.name }} - 订单详情</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", sans-serif; background: #f0f2f5; }
+        .topbar {
+            background: #fff; padding: 0 32px; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0,0,0,.08);
+        }
+        .topbar .title { font-size: 18px; font-weight: bold; color: #333; }
+        .topbar a { color: #667eea; text-decoration: none; margin-left: 16px; font-size: 14px; }
+        .container { max-width: 720px; margin: 32px auto; padding: 0 16px; }
+        .panel {
+            background: #fff; border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.08); padding: 32px;
+        }
+        .panel h2 { font-size: 20px; color: #333; margin-bottom: 24px; }
+        .row {
+            display: flex; justify-content: space-between; font-size: 15px;
+            color: #666; padding: 12px 0; border-bottom: 1px dashed #eee;
+        }
+        .row .v { color: #333; }
+        .price { color: #f5222d !important; font-weight: bold; font-size: 18px; }
+        .tag {
+            display: inline-block; padding: 2px 10px; border-radius: 10px;
+            font-size: 12px; background: #fff7e6; color: #fa8c16;
+        }
+        .tag.paid { background: #f6ffed; color: #52c41a; }
+        .actions { margin-top: 28px; text-align: center; }
+        .btn {
+            display: inline-block; padding: 11px 40px; background: #f5222d;
+            color: #fff; border: none; border-radius: 6px; font-size: 16px;
+            cursor: pointer; text-decoration: none;
+        }
+        .btn:hover { background: #d9202b; }
+        .btn-back { background: #8c8c8c; margin-left: 12px; }
+        .btn-back:hover { background: #737373; }
+        .hint { margin-top: 18px; font-size: 13px; color: #999; text-align: center; }
+    </style>
+    {% if order.id == 2 and order.notice %}
+    <!-- 用户二：进入页面立即弹窗，显示第二段 flag（Base64 编码，需自行解码） -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            alert({{ ('第二段 flag（Base64 编码，请自行解码）：' + order.notice)|tojson }});
+        });
+    </script>
+    {% endif %}
+</head>
+<body>
+    <div class="topbar">
+        <span class="title">用户订单管理系统</span>
+        <span>
+            <a href="{{ url_for('home') }}">返回列表</a>
+            <a href="{{ url_for('logout') }}">退出登录</a>
+        </span>
+    </div>
+    <div class="container">
+        <div class="panel">
+            <h2>{{ order.name }} - 订单详情</h2>
+            <div class="row"><span>订单编号</span><span class="v">{{ order.order_no or '-' }}</span></div>
+            <div class="row"><span>商品名称</span><span class="v">{{ order['product'] or '-' }}</span></div>
+            <div class="row">
+                <span>未付款金额</span>
+                <span class="v price">&yen; {{ '%.2f'|format(order.amount or 0) }}</span>
+            </div>
+            <div class="row">
+                <span>订单状态</span>
+                <span class="v">
+                    <span class="tag {{ 'paid' if order.status == '已付款' else '' }}">{{ order.status }}</span>
+                </span>
+            </div>
+
+            {% if order.id == 1 %}
+            <!--
+                用户一：应付款金额随隐藏字段提交。
+                考点：BP 抓包把 amount 改成小于 10（如 0.01）再放行。
+            -->
+            <form action="{{ url_for('pay') }}" method="post">
+                <input type="hidden" name="amount" value="{{ '%.2f'|format(order.amount or 0) }}">
+                <div class="actions">
+                    <button type="submit" class="btn">立即付款</button>
+                    <a class="btn btn-back" href="{{ url_for('home') }}">返回</a>
+                </div>
+                <p class="hint">应付金额：&yen; {{ '%.2f'|format(order.amount or 0) }}</p>
+            </form>
+            {% else %}
+            <div class="actions">
+                <a class="btn btn-back" href="{{ url_for('home') }}">返回列表</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
