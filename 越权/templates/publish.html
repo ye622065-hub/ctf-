@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}发布失物招领 - 湖州师范大学校园失物招领系统{% endblock %}
+{% block content %}
+
+<div style="max-width:600px;margin:20px auto;">
+  <div class="card">
+    <h2 style="margin-bottom:20px;color:#1e40af;">✍️ 发布失物招领</h2>
+    <form method="post">
+      <div class="field">
+        <label>标题</label>
+        <input type="text" name="title" required placeholder="例如：图书馆三楼丢失的黑色钱包">
+      </div>
+      <div class="field">
+        <label>详细描述</label>
+        <textarea name="description" rows="4" required placeholder="请详细描述物品特征、丢失时间等"></textarea>
+      </div>
+      <div class="field">
+        <label>地点</label>
+        <input type="text" name="location" required placeholder="例如：湖州师范学院图书馆三楼">
+      </div>
+      <div class="field">
+        <label>联系方式</label>
+        <input type="text" name="contact" required placeholder="手机号、微信等">
+      </div>
+      <button type="submit" class="btn btn-primary">发 布</button>
+      <a href="{{ url_for('index') }}" class="btn btn-outline" style="margin-left:8px;">取 消</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

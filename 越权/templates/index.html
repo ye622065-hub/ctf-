@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}失物招领列表 - 湖州师范大学校园失物招领系统{% endblock %}
+{% block content %}
+
+<h2 style="margin-bottom:16px;">📋 最新失物招领</h2>
+
+{% if not user %}
+  <div class="card" style="background:#fef3c7;color:#92400e;font-size:14px;">
+    💡 提示：注册并登录后即可发布和查看完整信息~
+  </div>
+{% endif %}
+
+{% for post in posts %}
+<div class="card">
+  <h3 style="color:#1e40af;margin-bottom:8px;">{{ post.title }}</h3>
+  <p style="color:#374151;font-size:14px;line-height:1.7;margin-bottom:10px;">{{ post.description }}</p>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:#6b7280;">
+    <span>📍 地点：{{ post.location }}</span>
+    <span>📞 联系方式：{{ post.contact }}</span>
+    <span>🕒 {{ post.created_at }}</span>
+  </div>
+  <div style="margin-top:10px;">
+    —— 发布者：{{ post.username }}
+  </div>
+</div>
+{% else %}
+<div class="card" style="text-align:center;color:#6b7280;">
+  暂无失物招领信息
+</div>
+{% endfor %}
+
+{% endblock %}

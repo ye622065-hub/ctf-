@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}登录 - 湖州师范大学校园失物招领系统{% endblock %}
+{% block content %}
+
+<div style="max-width:400px;margin:40px auto;">
+  <div class="card">
+    <h2 style="text-align:center;margin-bottom:20px;color:#1e40af;">🔐 用户登录</h2>
+    <form method="post">
+      <div class="field">
+        <label>用户名</label>
+        <input type="text" name="username" required placeholder="请输入用户名">
+      </div>
+      <div class="field">
+        <label>密码</label>
+        <input type="password" name="password" required placeholder="请输入密码">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:10px;">登 录</button>
+    </form>
+    <p style="text-align:center;margin-top:14px;font-size:13px;color:#6b7280;">
+      还没有账号？<a href="{{ url_for('register') }}" style="color:#2563eb;">立即注册</a>
+    </p>
+  </div>
+</div>
+
+{% endblock %}

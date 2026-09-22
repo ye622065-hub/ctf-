@@ -1,0 +1,63 @@
+# 湖州师范大学校园失物招领系统 —— docker-compose
+#
+# 使用方式：
+#   1) 默认模式（内置 SQLite + 默认 flag，开箱即用）：
+#        docker compose up -d --build
+#
+#   2) 比赛平台投放模式（动态 flag）：
+#        平台会为每个选手实例注入不同的 FLAG 环境变量，
+#        app.py 启动时自动读取并拆成两段 base64 分别藏入漏洞点。
+#        本地测试动态 flag 可手动指定：
+#          FLAG=flag{your_custom_flag_here} docker compose up -d --build
+#
+#   3) 接入外部 MySQL/PostgreSQL 数据库：
+#        取消下方 mysql 服务注释，并自行改造 app.py 使用 SQLAlchemy
+#
+#   4) 数据库持久化：
+#        已默认挂卷 ./data:/app/instance
+
+services:
+  lostfound:
+    build: .
+    image: huzsfxy/lostfound:latest
+    container_name: huzsfxy-lostfound
+    restart: unless-stopped
+    ports:
+      - "33050:5000"
+    environment:
+      # ====== 🔑 FLAG（动态注入）======
+      # ⚠️ 投放比赛平台时请【整行删除】下面这行 FLAG！
+      #    平台（CTFHub / GZCTF / NSSCTF / BUUCTF 等）会自动注入 FLAG 环境变量或 /flag 文件
+      #    本地调试时可手动指定：
+      #      FLAG=flag{your_flag_here} docker compose up -d
+      #    不指定则使用默认 flag
+      # FLAG: "flag{horizontal_leak_via_profile_id_param_and_vertical_bypass_no_role_check}"
+      # Flask session 加密密钥（生产环境务必替换）
+      SECRET_KEY: "huzsfxy_ctf_challenge_2024_change_me"
+      # SQLite 数据库文件路径
+      DB_PATH: "/app/instance/lostfound.db"
+    volumes:
+      - ./data:/app/instance
+    networks:
+      - ctf-net
+
+# 如需附带一个 MySQL 服务，可取消下面注释
+#  mysql:
+#    image: mysql:8.0
+#    container_name: huzsfxy-mysql
+#    restart: unless-stopped
+#    environment:
+#      MYSQL_ROOT_PASSWORD: rootpass123
+#      MYSQL_DATABASE: lostfound
+#      MYSQL_USER: lostfound
+#      MYSQL_PASSWORD: lostfoundpass
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - ./mysql_data:/var/lib/mysql
+#    networks:
+#      - ctf-net
+
+networks:
+  ctf-net:
+    driver: bridge

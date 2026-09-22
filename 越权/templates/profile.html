@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ target.username }} 的主页 - 湖州师范大学校园失物招领系统{% endblock %}
+{% block content %}
+
+<div class="card">
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;">
+      {{ target.username[0] }}
+    </div>
+    <div>
+      <h2 style="color:#1e40af;">{{ target.username }}</h2>
+      <p style="font-size:13px;color:#6b7280;">
+        {% if target.role == 'admin' %}
+          <span style="background:#fbbf24;color:#78350f;padding:2px 8px;border-radius:10px;font-size:11px;">管理员</span>
+        {% else %}
+          <span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:10px;font-size:11px;">普通用户</span>
+        {% endif %}
+      </p>
+      <p style="font-size:12px;color:#9ca3af;">注册于 {{ target.created_at }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:10px;color:#374151;">📝 个人简介</h3>
+  <pre style="background:#f3f4f6;padding:14px;border-radius:8px;font-size:13px;line-height:1.7;white-space:pre-wrap;font-family:inherit;color:#1f2937;">{{ target.bio or '这个用户还没有写简介哦~' }}</pre>
+
+  {% if is_self %}
+    <button class="btn btn-outline" onclick="document.getElementById('editBio').style.display='block'" style="margin-top:8px;">✏️ 编辑简介</button>
+    <div id="editBio" style="display:none;margin-top:12px;">
+      <textarea rows="4" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;">{{ target.bio or '' }}</textarea>
+      <button class="btn btn-primary" style="margin-top:6px;">保存修改</button>
+      <span style="font-size:12px;color:#9ca3af;margin-left:10px;">（功能演示用，未真正保存）</span>
+    </div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:10px;color:#374151;">📦 发布的失物招领 ({{ posts|length }})</h3>
+  {% for p in posts %}
+    <div style="border-bottom:1px solid #e5e7eb;padding:10px 0;">
+      <strong style="color:#1e40af;">{{ p.title }}</strong>
+      <span style="font-size:12px;color:#9ca3af;margin-left:8px;">{{ p.created_at }}</span>
+      <p style="font-size:13px;color:#6b7280;margin-top:4px;">{{ p.description[:80] }}{% if p.description|length > 80 %}...{% endif %}</p>
+    </div>
+  {% else %}
+    <p style="color:#9ca3af;font-size:13px;">暂无发布记录</p>
+  {% endfor %}
+</div>
+
+{% endblock %}
